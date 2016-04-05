@@ -30,7 +30,7 @@ Requirements
 
 ::
 
-    django >= 1.7
+    django>=1.7
     django-appconf>=0.6
     django-ipware>=1.1.3
 
