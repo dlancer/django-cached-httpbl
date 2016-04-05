@@ -22,7 +22,7 @@ install:
   - pip install flake8
 
 before_script:
-  - flake8 --exclude=migrations --ignore=E501,E225,E128,E126,E402,F401,F403 cached_httpbl
+  - flake8 --exclude=migrations --ignore=E501,E225,E128,E126,E402,E731,F401,F403 cached_httpbl
   - cd cached_httpbl/tests
 
 script: python runtests.py
