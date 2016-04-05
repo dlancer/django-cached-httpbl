@@ -22,9 +22,9 @@ These options should be defined in your ``settings.py`` file.
 
 * ``CACHED_HTTPBL_ALLOWED_THREAT_SCORE``: allowed threat score (default: 5)
 
-* ``CACHED_HTTPBL_CACHE_RESULTS``: cache results of httpBL checks in the django cache (default: True)
+* ``CACHED_HTTPBL_USE_CACHE``: use Django cache for httpBL (default: True)
 
-* ``CACHED_HTTPBL_CACHE_BACKEND``: django cache backend, if not provided, default django db is used for cache
+* ``CACHED_HTTPBL_CACHE_BACKEND``: Django cache backend, if not provided, default Django db is used for cache
 
 * ``CACHED_HTTPBL_CACHE_TIMEOUT``: cache invalidation timeout (seconds) (default: 86400)
 
