@@ -1,0 +1,28 @@
+language: python
+
+python:
+  - "3.3"
+  - "3.4"
+  - "2.7"
+
+env:
+  - DJANGO="django==1.8.11"
+  - DJANGO="django==1.7.11"
+
+matrix:
+  include:
+    - python: "3.5"
+      env: DJANGO="django==1.8.11"
+    - python: "3.5"
+      env: DJANGO="django==1.9.4"
+
+install:
+  - pip install $DJANGO
+  - pip install -e .
+  - pip install flake8
+
+before_script:
+  - flake8 --exclude=migrations --ignore=E501,E225,E128,E126,E402,F401,F403 cached_httpbl
+  - cd cached_httpbl/tests
+
+script: python runtests.py
