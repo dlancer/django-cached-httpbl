@@ -38,15 +38,15 @@ class CachedHTTPBL(object):
         self._last_result = None
         self._api_host = api_host if api_host else settings.CACHED_HTTPBL_API_HOST
         self._api_timeout = api_timeout if api_timeout else settings.CACHED_HTTPBL_API_TIMEOUT
-        self._cache_results = cache_results if cache_results else settings.CACHED_HTTPBL_CACHE_RESULTS
+        self._use_cache = cache_results if cache_results else settings.CACHED_HTTPBL_USE_CACHE
         self._cache_backend = cache_backend if cache_backend else settings.CACHED_HTTPBL_CACHE_BACKEND
         self._cache_timeout = cache_timeout if cache_timeout else settings.CACHED_HTTPBL_CACHE_TIMEOUT
         self._cache_version = 1
 
-        if self._cache_results and self._cache_backend is None:
+        if self._use_cache and self._cache_backend is None:
             self._cache_backend = 'default'
 
-        if self._cache_results:
+        if self._use_cache:
             try:
                 self._cache = cache.caches[self._cache_backend]
                 try:
@@ -56,10 +56,10 @@ class CachedHTTPBL(object):
             except cache.InvalidCacheBackendError:
                 raise ImproperlyConfigured('You should provide valid cache backend!')
 
-    def __make_cache_key(self, ip):
+    def _make_cache_key(self, ip):
         return 'cached_httpbl_{0}_ip:{1}'.format(self._api_key, ip)
 
-    def __request_httpbl(self, ip):
+    def _request_httpbl(self, ip):
 
         query = '.'.join([self._api_key] + ip.split('.')[::-1] + [self._api_host])
 
@@ -86,16 +86,16 @@ class CachedHTTPBL(object):
         :return: httpBL check results or None if any error is occurred
         """
         self._last_result = None
-        key = None
 
         if is_valid_ipv4(ip):
-            if self._cache_results:
-                key = self.__make_cache_key(ip)
+            key = None
+            if self._use_cache:
+                key = self._make_cache_key(ip)
                 self._last_result = self._cache.get(key, version=self._cache_version)
 
             if self._last_result is None:
                 # request httpBL API
-                error, age, threat, type = self.__request_httpbl(ip)
+                error, age, threat, type = self._request_httpbl(ip)
                 if age != -1:
                     self._last_result = {
                         'error': error,
@@ -103,7 +103,7 @@ class CachedHTTPBL(object):
                         'threat': threat,
                         'type': type
                     }
-                    if self._cache_results:
+                    if self._use_cache:
                         self._cache.set(key, self._last_result, version=self._cache_version)
         return self._last_result
 
@@ -128,11 +128,11 @@ class CachedHTTPBL(object):
         return True if result['type'] > 0 else False
 
     def invalidate_ip(self, ip):
-        if self._cache_results:
-            key = self.__make_cache_key(ip)
+        if self._use_cache:
+            key = self._make_cache_key(ip)
             self._cache.delete(key, version=self._cache_version)
 
     def invalidate_cache(self):
-        if self._cache_results:
+        if self._use_cache:
             self._cache_version += 1
             self._cache.increment('cached_httpbl_{0}_version'.format(self._api_key))

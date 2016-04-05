@@ -10,7 +10,7 @@ class CachedHttpblAppConf(AppConf):
     API_TIMEOUT = getattr(settings, 'CACHED_HTTPBL_API_TIMEOUT', 5)
     HARMLESS_AGE = getattr(settings, 'CACHED_HTTPBL_HARMLESS_AGE', 14)
     THREAT_SCORE = getattr(settings, 'CACHED_HTTPBL_THREAT_SCORE', 5)
-    CACHE_RESULTS = getattr(settings, 'CACHED_HTTPBL_CACHE_RESULTS', True)
+    USE_CACHE = getattr(settings, 'CACHED_HTTPBL_USE_CACHE', True)
     CACHE_BACKEND = getattr(settings, 'CACHED_HTTPBL_CACHE_BACKEND', None)
     CACHE_TIMEOUT = getattr(settings, 'CACHED_HTTPBL_CACHE_TIMEOUT', 86400)
     REDIRECT_URL = getattr(settings, 'CACHED_HTTPBL_REDIRECT_URL', None)

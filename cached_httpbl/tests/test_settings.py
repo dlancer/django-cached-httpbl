@@ -40,5 +40,14 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
 )
 
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'cached-httpbl',
+    }
+}
+
 # this htttpBL API key is legal only for testing purposes
 CACHED_HTTPBL_API_KEY = 'abcdefghijkl'
+CACHED_HTTPBL_USE_CACHE = False

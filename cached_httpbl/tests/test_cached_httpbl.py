@@ -20,7 +20,7 @@ class TestCachedHTTPBL(CachedHTTPBLCase):
 
     def test_middleware_threat(self):
         """
-          Detecting a threat should redirect to redirect_url or return HttpResponseNotFound.
+          If a threat is detected we should redirect to redirect_url or return HttpResponseNotFound.
         """
         self.request.environ['REMOTE_ADDR'] = '127.1.10.1'
 
@@ -91,3 +91,11 @@ class TestCachedHTTPBL(CachedHTTPBLCase):
         self.httpBL.check_ip('127.40.1.1')
         self.assertEqual(self.httpBL.is_suspicious(), True)
         self.assertEqual(self.httpBL.is_threat(), False)
+
+    @override_settings(CACHED_HTTPBL_USE_CACHE=True)
+    def test_httpbl_cache(self):
+        httpBL = CachedHTTPBL()
+        httpBL.check_ip('127.1.10.1')
+        result = httpBL._cache.get(httpBL._make_cache_key('127.1.10.1'),
+                                   version=httpBL._cache_version)
+        self.assertEqual(result, {'error': 127, 'age': 1, 'threat': 10, 'type': 1})
