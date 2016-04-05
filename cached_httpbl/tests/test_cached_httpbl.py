@@ -14,13 +14,13 @@ class TestCachedHTTPBL(CachedHTTPBLCase):
     @override_settings(CACHED_HTTPBL_API_KEY=None)
     def test_config(self):
         """
-          Missing httpBL API key should raise ImproperlyConfigured
+        Missing httpBL API key should raise ImproperlyConfigured
         """
         self.assertRaises(ImproperlyConfigured, CachedHTTPBL)
 
     def test_middleware_threat(self):
         """
-          If a threat is detected we should redirect to redirect_url or return HttpResponseNotFound.
+        If a threat is detected we should redirect to redirect_url or return HttpResponseNotFound.
         """
         self.request.environ['REMOTE_ADDR'] = '127.1.10.1'
 
@@ -33,7 +33,7 @@ class TestCachedHTTPBL(CachedHTTPBLCase):
 
     def test_template_response(self):
         """
-          Test if template_response properly sets context variables.
+        Test if template_response properly sets context variables.
         """
         response = SimpleTemplateResponse(template=Template(''), context={})
 
@@ -60,7 +60,9 @@ class TestCachedHTTPBL(CachedHTTPBLCase):
                          )
 
     def test_ip_check(self):
-        # Request httpBL API with special test values
+        """
+        Check httpBL API with special test values
+        """
 
         # different threat types
         result = self.httpBL.check_ip('127.1.1.0')
@@ -84,6 +86,10 @@ class TestCachedHTTPBL(CachedHTTPBLCase):
         self.assertEqual(result, {'error': 127, 'age': 40, 'threat': 1, 'type': 1})
 
     def test_is_suspicious(self):
+        """
+        Check is_suspicious and is_threat methods
+        """
+
         self.httpBL.check_ip('127.1.10.1')
         self.assertEqual(self.httpBL.is_suspicious(), True)
         self.assertEqual(self.httpBL.is_threat(), True)
@@ -94,6 +100,10 @@ class TestCachedHTTPBL(CachedHTTPBLCase):
 
     @override_settings(CACHED_HTTPBL_USE_CACHE=True)
     def test_httpbl_cache(self):
+        """
+        Check httpBL API with cache enabled
+        """
+
         httpBL = CachedHTTPBL()
         httpBL.check_ip('127.1.10.1')
         result = httpBL._cache.get(httpBL._make_cache_key('127.1.10.1'),
