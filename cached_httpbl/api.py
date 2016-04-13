@@ -79,8 +79,6 @@ class CachedHTTPBL(object):
 
         error, age, threat, type = [int(x) for x in response.split('.')]
 
-        assert error == 127, 'Incorrect httpBL API usage'
-
         return error, age, threat, type
 
     def check_ip(self, ip):
@@ -102,7 +100,7 @@ class CachedHTTPBL(object):
             if self._last_result is None:
                 # request httpBL API
                 error, age, threat, type = self._request_httpbl(ip)
-                if age != -1:
+                if error == 127:
                     self._last_result = {
                         'error': error,
                         'age': age,
@@ -128,15 +126,15 @@ class CachedHTTPBL(object):
         threat_score = threat_score if threat_score is not None else settings.CACHED_HTTPBL_THREAT_SCORE
         threat_type = threat_type if threat_type is not None else -1
         result = result if result is not None else self._last_result
-
         threat = False
-        if result['age'] < harmless_age and result['threat'] > threat_score:
-            threat = True
-        if threat_type > -1:
-            if result['type'] & threat_type:
+        if result is not None:
+            if result['age'] < harmless_age and result['threat'] > threat_score:
                 threat = True
-            else:
-                threat = False
+            if threat_type > -1:
+                if result['type'] & threat_type:
+                    threat = True
+                else:
+                    threat = False
         return threat
 
     def is_suspicious(self, result=None):
@@ -148,7 +146,10 @@ class CachedHTTPBL(object):
         """
 
         result = result if result is not None else self._last_result
-        return True if result['type'] > 0 else False
+        suspicious = False
+        if result is not None:
+            suspicious = True if result['type'] > 0 else False
+        return suspicious
 
     def invalidate_ip(self, ip):
         """
