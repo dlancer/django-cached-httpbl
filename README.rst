@@ -1,7 +1,7 @@
 django-cached-httpbl
 ====================
 
-``django-cached-httpbl`` is a cached httpBL service support for Django 1.7+.
+``django-cached-httpbl`` is a cached httpBL service support for Django 1.7+
 
 
 .. image:: https://travis-ci.org/dlancer/django-cached-httpbl.svg?branch=master
