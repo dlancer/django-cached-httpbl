@@ -1,4 +1,5 @@
 import socket
+import logging
 
 from django.core import cache
 from django.core.exceptions import ImproperlyConfigured
@@ -11,6 +12,9 @@ HTTPBL_THREAT_SEARCHENGINE = 0
 HTTPBL_THREAT_SUSPICIOUS = 1
 HTTPBL_THREAT_HARVESTER = 2
 HTTPBL_THREAT_SPAMMER = 4
+
+if settings.CACHED_HTTPBL_USE_LOGGING:
+    logger = logging.getLogger(__name__)
 
 
 class CachedHTTPBL(object):
@@ -109,6 +113,17 @@ class CachedHTTPBL(object):
                     }
                     if self._use_cache:
                         self._cache.set(key, self._last_result, timeout=self._api_timeout, version=self._cache_version)
+            if self._last_result is not None and settings.CACHED_HTTPBL_USE_LOGGING:
+                logger.info(
+                    'httpBL check ip: {0}; '
+                    'httpBL result: error: {1}, age: {2}, threat: {3}, type: {4}'.format(ip,
+                                                                                         self._last_result['error'],
+                                                                                         self._last_result['age'],
+                                                                                         self._last_result['threat'],
+                                                                                         self._last_result['type']
+                                                                                         )
+                )
+
         return self._last_result
 
     def is_threat(self, result=None, harmless_age=None, threat_score=None, threat_type=None):

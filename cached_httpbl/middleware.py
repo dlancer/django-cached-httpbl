@@ -27,14 +27,14 @@ class CachedHTTPBLViewMiddleware(object):
 
         if request.method not in self.ignore_methods and request.__httpbl_is_threat:
             if settings.CACHED_HTTPBL_USE_LOGGING:
-                logger.warning(
-                    'Blocked request from {0}; '
-                    'httpBL: error: {1}, age: {2}, threat: {3}, type: {4}'.format(ip,
-                                                                                  request.__httpbl_result['error'],
-                                                                                  request.__htpbl_result['age'],
-                                                                                  request.__httpbl_result['threat'],
-                                                                                  request.__httpbl_result['type']
-                                                                                  )
+                logger.info(
+                    'Blocked request from {0}; httpBL result: '
+                    '[error: {1}, age: {2}, threat: {3}, type: {4}]'.format(ip,
+                                                                            request.__httpbl_result['error'],
+                                                                            request.__htpbl_result['age'],
+                                                                            request.__httpbl_result['threat'],
+                                                                            request.__httpbl_result['type']
+                                                                            )
                 )
 
             if self.redirect_url is not None:
