@@ -1,1 +1,1 @@
-django-cached-httpbl>=0.0.3
+django-cached-httpbl>=0.0.4
