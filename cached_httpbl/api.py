@@ -104,7 +104,7 @@ class CachedHTTPBL(object):
             if self._last_result is None:
                 # request httpBL API
                 error, age, threat, type = self._request_httpbl(ip)
-                if error == 127:
+                if error == 127 or error == 0:
                     self._last_result = {
                         'error': error,
                         'age': age,
